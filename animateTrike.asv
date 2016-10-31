@@ -1,0 +1,27 @@
+%animateTrike.m
+initial_angle = pi/4; % radians
+xDotDot = 20; % m/s^2
+D = 0.5; % meters
+[time, stocks] = simulateTrike(D, initial_angle, xDotDot);
+
+thetas = stocks(:,1);
+x = time.^2 / 2 * xDotDot;
+
+x_pivot = x;
+y_pivot = zeros(size(x));
+x_com = x + D.*cos(thetas);
+y_com = D.*sin(thetas);
+
+j = 1;
+Xs = [x_pivot(j); x_com(j)];
+Ys = [y_pivot(j); y_com(j)];
+plot(Xs, Ys);
+
+figure;
+loops = numel(time);
+F(loops) = struct('cdata',[],'colormap',[]);
+for j = 1:loops
+    Xs = [x_pivot(j); x_com(j)];
+    Ys = [y_pivot(j); y_com(j)];
+    plot(Xs, Ys, 'o');
+    plot(Xs, Ys);
