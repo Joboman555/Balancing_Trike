@@ -1,7 +1,7 @@
 
 function [time, stocks] = simulateTrike(D, initial_angle, xDotDot)
     close all;
-    mass = 100; % kg
+    mass = 85; % kg
     time_limit = 30; % seconds
     g = 9.8; % m/s^2
     I = (1/12) * mass * (2*D)^2;

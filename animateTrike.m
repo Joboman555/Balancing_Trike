@@ -42,7 +42,7 @@ end
 
 function panningView(loops, x_pivot, x_com, y_pivot, y_com, min_y, max_y, D, thetas, initial_angle)
     F(loops) = struct('cdata',[],'colormap',[]);
-    for j = 1:loops
+    for j = 1:1
         clf
         Xs = [x_pivot(j); x_com(j)];
         Ys = [y_pivot(j); y_com(j)];
@@ -84,7 +84,7 @@ function drawRider(D, angle, x)
     plot(new_COM_x * unitLength + x, new_COM_y * unitHeight)
     
     
-    % Draw frame
+    % Points on Bike
     back_hub_x = 0;
     back_hub_y = 1/3;
     front_hub_x = 2;
@@ -96,6 +96,10 @@ function drawRider(D, angle, x)
     seat_tube_angle = (seat_stay_y - crank_y)/(seat_stay_x - crank_x);
     seat_tube_x = 0.725;
     seat_tube_y = (seat_tube_x - seat_stay_x)*seat_tube_angle + seat_stay_y;
+    seat_start_x = 0.6;
+    seat_start_y = seat_tube_y;
+    seat_end_x = 0.85;
+    seat_end_y = seat_tube_y;
     down_tube_x = 1.8;
     down_tube_y = 0.9;
     fork_angle = (front_hub_y - down_tube_y)/(front_hub_x - down_tube_x);
@@ -103,9 +107,27 @@ function drawRider(D, angle, x)
     fork_y = (fork_x - down_tube_x)*fork_angle + down_tube_y;
     top_tube_x = 1.775;
     top_tube_y = (top_tube_x - down_tube_x)*fork_angle + down_tube_y;
+    handle_x = 1.4;
+    handle_y = fork_y + 0.1;
+    
+    % Points on Human
+    foot_x = 0.9;
+    foot_y = 1/3;
+    knee_x = 1;
+    knee_y = 2/3;
+    hip_x = 0.85;
+    hip_y = 1.1;
+    neck_x = 1.1;
+    neck_y = 1.9;
+    back_angle = (neck_y - hip_y)/(neck_x - hip_x);
+    shoulder_x = 1;
+    shoulder_y = (shoulder_x - hip_x)*back_angle + hip_y;
     
     
-    % Draw the wheels
+    
+    
+    
+    % Create wheel points
     [back_wheel_xs, back_wheel_ys] = getCircle(back_hub_x, back_hub_y * unitHeight, (1/3) * unitHeight);
     [front_wheel_xs, front_wheel_ys] = getCircle(front_hub_x*unitLength, front_hub_y * unitHeight, (1/3) * unitHeight);
     
@@ -115,38 +137,55 @@ function drawRider(D, angle, x)
     %Plot the wheels rotated
     [new_back_xs , new_back_ys] = rotate(back_wheel_xs, back_wheel_ys, angle);
     [new_front_xs, new_front_ys] = rotate(front_wheel_xs, front_wheel_ys, angle);
-    plot(new_back_xs  + x, new_back_ys, 'r');
-    plot(new_front_xs + x, new_front_ys, 'r');
+    plot(new_back_xs  + x, new_back_ys, 'k');
+    plot(new_front_xs + x, new_front_ys, 'k');
     
     % Chain Stay
-%      plot([0, crank_x]*unitLength + x, [(1/3), crank_y]*unitHeight, 'k')
     plotRotated([0, crank_x], [(1/3), crank_y], angle, x);
     
     % Seat Stay
-%      plot([0, seat_stay_x]*unitLength + x, [(1/3), seat_stay_y]*unitHeight, 'k')
     plotRotated([0, seat_stay_x], [(1/3), seat_stay_y], angle, x); 
     
     % Seat Tube
-%     plot([seat_tube_x, crank_x]*unitLength + x, [seat_tube_y, crank_y]*unitHeight, 'k')
     plotRotated([seat_tube_x, crank_x], [seat_tube_y, crank_y], angle, x);
     
+    % Seat
+    plotRotated([seat_start_x, seat_end_x], [seat_start_y, seat_end_y], angle, x);
+    
     % Down Tube
-%     plot([crank_x, down_tube_x]*unitLength + x, [crank_y, down_tube_y]*unitHeight, 'k')
     plotRotated([crank_x, down_tube_x], [crank_y, down_tube_y], angle, x);
     
     % Fork
-%     plot([front_hub_x, fork_x]*unitLength + x, [front_hub_y, fork_y]*unitHeight, 'k')
     plotRotated([front_hub_x, fork_x], [front_hub_y, fork_y], angle, x);
     
+    % Handle
+    plotRotated([fork_x, handle_x], [fork_y, handle_y], angle, x);
+    
     % Top Tube
-%     plot([seat_stay_x, top_tube_x]*unitLength + x, [seat_stay_y, top_tube_y]*unitHeight, 'k')
     plotRotated([seat_stay_x, top_tube_x], [seat_stay_y, top_tube_y], angle, x);
+    
+    % Calf
+    plotRotated([foot_x, knee_x], [foot_y, knee_y], angle, x);
+    
+    % Thigh
+    plotRotated([knee_x, hip_x], [knee_y, hip_y], angle, x);
+    
+    % Back
+    plotRotated([hip_x, neck_x], [hip_y, neck_y], angle, x);
+    
+    % Arm
+    plotRotated([shoulder_x, handle_x], [shoulder_y, handle_y], angle, x);
+    
+    % Head
+    [head_xs, head_ys] = getCircle(neck_x, neck_y, (1/5));
+    plotRotated(head_xs, head_ys, angle, x);
+    
     axis equal;
     hold off;
     
     function plotRotated(xs, ys, angle, x)
         [new_xs, new_ys] = rotate(xs, ys, angle);
-        plot(new_xs*unitLength + x, new_ys*unitHeight, 'r');
+        plot(new_xs*unitLength + x, new_ys*unitHeight, 'k');
     end
 end
 
